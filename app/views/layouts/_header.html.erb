@@ -1,0 +1,22 @@
+<!-- Header indicates this goes at the top of the page
+     and it has 3 CSS classes (separate by spaces).
+     CSS classes can be multiple times on a page.
+     CSS ids can only be used once.
+     These navbar classes are specific to the Bootstrap Framework -->
+<header class="navbar navbar-fixed-top navbar-inverse">
+
+  <!-- divs are used by HTML to divide site into sections -->
+  <div class="navbar-inner">
+    <div class="container">
+      <%= link_to 'tutorial app', '#', id: 'logo' %>
+      <nav>
+        <!-- ul == unordered list -->
+        <ul class="nav pull-right">
+          <li><%= link_to 'Home',     '#' %></li>
+          <li><%= link_to 'Help',     '#' %></li>
+          <li><%= link_to 'Sign in',  '#' %></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
