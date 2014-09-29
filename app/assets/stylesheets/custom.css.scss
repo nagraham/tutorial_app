@@ -127,9 +127,9 @@ footer {
   color: $grayLight;
 
   a {
-    color: #gray;
+    color: $gray;
     &:hover {
-      color: #grayDarker;
+      color: $grayDarker;
     }
   }
 
