@@ -2,14 +2,23 @@
  * Just including this line gives us the bootstrap frame work;
  * your app instantly looks like a cool, swanky, modern web app.
  * Although, it may appear too similar to other web apps . . .
+ *
  */
 @import "bootstrap";
 
 /*
+ *  --- SASS mixins, variables, etc. ---
+ */
+$grayMediumLight: #eaeaea;
+
+/*
  * --- Universal CSS Rules ---
  * CSS rules are either a class, id, HTML tag, or a combination,
- * followed by styling commands.
- *
+ * followed by styling commands. SASS gives us some cool additional powers
+ * on top of CSS. For example, we can next rules. We can also use '$' to define
+ * variables: $light_gray: #999. We can also use pre-built variables. The
+ * list is at (http://bootstrapdocs.com/v2.0.4/docs/less.html). Those are
+ * in 'LESS' but all you need to do is convert @ to $
  */
 
 html {
@@ -33,12 +42,18 @@ textarea {
    The period denotes a rule for a class */
 .center {
   text-align: center;
+  h1 {
+    margin-bottom: 10px;
+  }
 }
 
+/*
+ * w/ SASS, we can embed this standalone CSS rule in the .center rule.
+ *
 .center h1 {
   margin-bottom: 10px;
 }
-
+*/
 
 /*
  * --- Typography ---
@@ -61,7 +76,7 @@ h2 {
   margin-bottom: 30px;
   text-align: center;
   font-weight: normal;
-  color: #999;
+  color: $grayLight;
 }
 
 p {
@@ -78,20 +93,28 @@ p {
   float: left;
   margin-right: 10px;
   font-size: 1.7em;
-  color: #fff;  /* color == white */
+  color: $white;  /* $white / #fff == white */
   text-transform: uppercase;
   letter-spacing: -1px;
   padding-top: 9px;
   font-weight: bold;
   line-height: 1;
+
+  &:hover {
+    color: $white;
+    text-decoration: none;
+  }
 }
 
-
+/*
+ * W/ SASS, we can take this attribute rule for the id '#logo" and
+ * add it to the main logo rule by using '&' to reference '#logo'
+ *
 #logo:hover {
   color: #fff;
   text-decoration: none;
 }
-
+*/
 
 /*
  * --- Footer ---
@@ -100,10 +123,31 @@ p {
 footer {
   margin-top: 45px;
   padding-top: 5px;
-  border-top: 1px solid #eaeaea;
-  color: #999;
+  border-top: 1px solid $grayMediumLight;
+  color: $grayLight;
+
+  a {
+    color: #gray;
+    &:hover {
+      color: #grayDarker;
+    }
+  }
+
+  small {
+    float: left
+  }
+
+  ul {
+    float: right;
+    list-style: none;
+    li {
+      float: left;
+      margin-left: 10px;
+    }
+  }
 }
 
+/*
 footer a {
   color: #555;
 }
@@ -125,3 +169,4 @@ footer ul li {
   float: left;
   margin-left: 10px;
 }
+*/
