@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 MAX_NAME_LENGTH = 50
+MIN_PASSWORD_LEN = 6
 
 describe User do
 
   # set a test user for each test
-  before { @user = User.new(name: "Example User", email: "user@example.com") }
+  before do
+    @user = User.new(name: "Example User", email: "user@example.com",
+                     password: "foobar", password_confirmation: "foobar")
+  end
 
   # makes our test user the default subject for our tests
   subject { @user }
@@ -13,6 +17,10 @@ describe User do
   # these tests use the Ruby respond_to? method...good for simple validation
   it { should respond_to(:name) }
   it { should respond_to(:email) }
+  it { should respond_to(:password_digest) }
+  it { should respond_to(:password) }
+  it { should respond_to(:password_confirmation) }
+  it { should respond_to(:authenticate) }
 
   # just a sanity check, to ensure our subject is valid
   it { should be_valid }
@@ -53,7 +61,40 @@ describe User do
       user_with_same_email.email = @user.email.upcase # <- mame case insensitive
       user_with_same_email.save       # <- saves to test DB
     end
-
     it { should_not be_valid }
+  end
+
+  describe "when password is not present" do
+    before do
+      @user = User.new(name: "Example User", email: "user@example.com",
+                       password: " ", password_confirmation: " ")
+    end
+    it { should_not be_valid }
+  end
+
+  describe "when password doesn't match confirmation password" do
+    before { @user.password_confirmation = "mismatch" }
+    it { should_not be_valid }
+  end
+
+  describe "return value of password authenticate method " do
+    before { @user.save } # <- save to test DB so we can use "find_by()"
+    let(:found_user) { User.find_by(email: @user.email) }
+
+    describe "with valid password" do
+      it { should eq found_user.authenticate(@user.password) }
+    end
+
+    describe "with invalid password" do
+      let(:user_for_invalid_password) { found_user.authenticate("invalid") }
+
+      it { should_not eq user_for_invalid_password }
+      specify { expect(user_for_invalid_password).to be_false }
+    end
+  end
+
+  describe "with a password that's too short" do
+    before { @user.password = @user.password_confirmation = "a" * (MIN_PASSWORD_LEN - 1)  }
+    it { should be_invalid }
   end
 end
