@@ -19,5 +19,6 @@ class User < ActiveRecord::Base
   #  - require presence of a password
   #  - require the passwords match
   #  - add an authenticate method
+  # It depends on the model having a "password_digest" column in the DB
   has_secure_password
 end

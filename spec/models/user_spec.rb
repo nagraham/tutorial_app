@@ -77,6 +77,8 @@ describe User do
     it { should_not be_valid }
   end
 
+  # the authenticate method is provided by bcrypt-ruby;
+  # it is activated by "has_secure_password" method in user model
   describe "return value of password authenticate method " do
     before { @user.save } # <- save to test DB so we can use "find_by()"
     let(:found_user) { User.find_by(email: @user.email) }
