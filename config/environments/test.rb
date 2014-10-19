@@ -33,4 +33,9 @@ TutorialApp::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  # --- ADDED BY ALEX ---
+
+  # Speed up tests by lowering bcrypt's cost function for hashes
+  ActiveModel::SecurePassword.min_cost = true
 end
