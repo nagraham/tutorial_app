@@ -21,6 +21,7 @@ describe User do
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:authenticate) }
+  it { should respond_to(:remember_token) }
 
   # just a sanity check, to ensure our subject is valid
   it { should be_valid }
@@ -99,4 +100,11 @@ describe User do
     before { @user.password = @user.password_confirmation = "a" * (MIN_PASSWORD_LEN - 1)  }
     it { should be_invalid }
   end
+
+  # test for the user's remember token for maintaining sessions
+  describe "has valid remember token" do
+    before { @user.save }
+    its(:remember_token) { should_not be_blank }
+  end
+
 end

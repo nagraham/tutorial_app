@@ -13,6 +13,8 @@
 
   <!-- container is specific to bootstrap -->
   <div class="container">
+
+    <!-- This will produce flash messages -->
     <% flash.each do |key, value| %>
       <div class="alert alert-<%= key %>"><%= value %></div>
     <% end %>
