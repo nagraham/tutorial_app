@@ -1,0 +1,29 @@
+<% provide(:title, 'All Users') %>
+<h1>All Users</h1>
+
+<!-- provided by will_paginate gem -->
+<%= will_paginate %>
+
+<!--
+ This bit of code works because we created a partial called _user_html_erb.
+ When you call render on a collection of objects, for each obj, Rails looks
+ up the class name and renders the view named after that class. The result
+ is very succinct code.
+
+ From this . . .
+  <ul class="users">
+    < @users.each do |user| %>
+      <li>
+        <= gravatar_for user, size: 52 %>
+    <= link_to user.name, user %>
+      </li>
+    < end %>
+  </ul>
+
+ To 3 lines
+-->
+<ul class='users'>
+  <%= render @users %>
+</ul>
+
+<%= will_paginate %>

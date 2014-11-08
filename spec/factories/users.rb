@@ -1,12 +1,15 @@
-
 FactoryGirl.define do
 
-
   factory :user do
-    name      'Alex Graham'
-    email     'nagraham00@example.com'
-    password  'funnybunny'
-    password_confirmation 'funnybunny'
+    sequence(:name)  { |n| "Person #{n}" }
+    sequence(:email) { |n| "person_#{n}@example.com" }
+    password 'foobar'
+    password_confirmation 'foobar'
+
+    # this embedded factor inherits the stuff above!
+    factory :admin do
+      admin true
+    end
   end
 
 end

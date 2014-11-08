@@ -4,6 +4,58 @@ describe "User pages" do
 
   subject { page }
 
+  #
+  # --- User Index Page---
+  #
+  describe 'index page' do
+    before do
+      sign_in FactoryGirl.create(:user)
+      visit users_path
+    end
+
+    it { should have_title('All Users') }
+    it { should have_content('All Users') }
+
+    # NOTE: Pagination is provided by will_pagination gem
+    describe 'pagination' do
+      # before(:all) creates 30 users only ONCE
+      before(:all) { 30.times { FactoryGirl.create(:user) } }
+      after(:all)  { User.delete_all }
+
+      it { should have_selector('div.pagination') }
+    end
+
+    it 'should list each user' do
+      User.paginate(page: 1).each do |user|
+        expect(page).to have_selector('li', text: user.name)
+      end
+    end
+
+    describe 'delete links' do
+
+      it { should_not have_link('delete') }
+
+      describe 'as an admin user' do
+        let(:admin) { FactoryGirl.create(:admin) }
+        before do
+          sign_in admin
+          visit users_path
+        end
+
+        it { should have_link('delete', href: user_path(User.first)) }
+        it 'should be able to delete another user' do
+          expect do
+            click_link('delete', match: :first)
+          end.to change(User, :count).by(-1)
+        end
+        it { should_not have_link('delete', href: user_path(admin)) }
+      end
+    end
+  end
+
+  #
+  # --- Profile Page---
+  #
   describe 'profile page' do
     let(:user) { FactoryGirl.create(:user) }
     before { visit user_path(user) }
@@ -12,6 +64,9 @@ describe "User pages" do
     it { should have_title(user.name) }
   end
 
+  #
+  # --- Signup Page---
+  #
   describe 'signup page' do
     before { visit signup_path }
 
@@ -60,6 +115,50 @@ describe "User pages" do
         it { should have_title(user.name) }
         it { should have_selector('div.alert.alert-success', text: 'Welcome') }
       end
+    end
+  end
+
+  #
+  # --- User Edit Page---
+  #
+  describe 'updating a user' do
+    let(:user) { FactoryGirl.create(:user) }
+    before do
+      sign_in user
+      visit edit_user_path(user)
+    end
+
+    describe 'the page content' do
+      it { should have_content('Update your profile') }
+      it { should have_title('Edit User') }
+      it { should have_link('change', href: 'http://gravatar.com/emails') }
+    end
+
+    describe 'with invalid information' do
+      before { click_button 'Save changes' }
+      it { should have_content 'error' }
+    end
+
+    describe 'with valid information' do
+      let(:new_name)  { 'Totes McGee' }
+      let(:new_email) { 'daTotes@gmail.com' }
+
+      before do
+        fill_in 'Name',          with: new_name
+        fill_in 'Email',         with: new_email
+        fill_in 'Password',      with: user.password
+        fill_in 'Confirmation',  with: user.password
+        click_button 'Save changes'
+      end
+
+      it { should have_title(new_name) }
+      it { should have_selector('div.alert.alert-success') }
+      it { should have_link('Sign out', href: signout_path) }
+
+      # "reload" refreshes the 'user' model; we expect it to now
+      # have the updated data
+      specify { expect(user.reload.name).to eq new_name }
+      specify { expect(user.reload.email).to eq new_email.downcase }
     end
   end
 

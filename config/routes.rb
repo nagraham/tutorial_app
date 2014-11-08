@@ -1,11 +1,6 @@
 TutorialApp::Application.routes.draw do
 
   get "users/new"
-  # --- Static Pages Routes ---
-  # get "static_pages/home"
-  # get "static_pages/help"
-  # get 'static_pages/about'
-  # get 'static_pages/contact'
 
   # --- Static Pages Named Routes ---
   # This changes the URL to '/help', etc.
@@ -19,7 +14,7 @@ TutorialApp::Application.routes.draw do
   # --- User Named Routes ---
   match '/signup', to: "users#new", via: 'get'
 
-  root 'users#new'
+  root 'static_pages#home'
 
   # --- Sign-in Routes ---
   match '/signin', to: 'sessions#new', via: 'get'
