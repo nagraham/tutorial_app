@@ -19,31 +19,47 @@ describe 'Static pages' do
   # define the CAPYBARA subject for our tests; CAPY gives us page variable
   subject{ page }
 
-  describe 'Home page' do
+  describe 'the home page' do
 
-    before { visit root_path }  # specify which path CAPYBARA should visit
+    before { visit root_path }
     it { should have_content('Tutorial App') }
     it { should have_title(full_title('')) }
     # We test that it DOESN'T have the page title because have_title
     # will also just search for sub-strings
     it { should_not have_title('| Home') }
 
+    context 'for signed in users' do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: 'Lorem ipsum')
+        FactoryGirl.create(:micropost, user: user, content: 'Dolor sit amet')
+        sign_in user
+        visit root_path
+      end
+
+      it 'should render the user\'s feed' do
+        user.feed.each do |feed|
+          expect(page).to have_selector("li##{feed.id}", text: feed.content)
+        end
+      end
+    end
+
   end
 
 
-  describe 'Help page' do
+  describe 'the help page' do
     before { visit help_path }
     it { should have_content('Help') }
     it { should have_title (full_title('Help'))}
   end
 
-  describe 'About page' do
+  describe 'the about page' do
     before { visit about_path }
     it { should have_content('About Us') }
     it { should have_title(full_title('About Us')) }
   end
 
-  describe 'Contact page' do
+  describe 'the contact page' do
     before { visit contact_path }
     it { should have_content('Contact')}
     it { should have_title(full_title('Contact'))}

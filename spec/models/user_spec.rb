@@ -23,6 +23,8 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
   it { should respond_to(:remember_token) }
+  it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
 
   # just a sanity check, to ensure our subject is valid
   it { should be_valid }
@@ -116,6 +118,45 @@ describe User do
     end
 
     it { should be_admin }
+  end
+
+  #
+  # --- Test associations with microposts ---
+  #
+  describe 'micropost associations' do
+    before { @user.save }
+
+    # let!() to override lazy creation, and create immediately
+    let!(:older_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
+    end
+
+    # convert to array, b/c group of microposts returns as ActiveRecord proxy record
+    it 'should have the right microposts in the right order' do
+      expect(@user.microposts.to_a).to eql [newer_micropost, older_micropost]
+    end
+
+    it 'should destroy associated microposts when the user is destroyed' do
+      microposts = @user.microposts.to_a
+      @user.destroy
+      expect(microposts).not_to be_empty
+      microposts.each do |micropost|
+        expect(Micropost.where(id: micropost.id)).to be_empty
+      end
+    end
+
+    describe 'status' do
+      let(:unfollowed_user) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
+
+      its(:feed) { should include(older_micropost) }
+      its(:feed) { should include(newer_micropost) }
+      its(:feed) { should_not include(unfollowed_user) }
+    end
   end
 
 end

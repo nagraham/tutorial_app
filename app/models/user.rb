@@ -2,6 +2,8 @@ class User < ActiveRecord::Base
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
+  has_many :microposts, dependent: :destroy
+
   validates :name,
             presence: true,
             length: { maximum: 50 }
@@ -24,6 +26,10 @@ class User < ActiveRecord::Base
   #  - add an authenticate method
   # It depends on the model having a "password_digest" column in the DB
   has_secure_password
+
+  def feed
+    Micropost.where('user_id = ?', id)
+  end
 
   def User.new_remember_token
     SecureRandom.urlsafe_base64

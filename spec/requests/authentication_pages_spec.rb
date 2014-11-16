@@ -92,6 +92,20 @@ describe 'Authentication' do
           end
         end
       end
+
+      # --- Accessing Microposts ---
+      describe 'in the Microposts controller' do
+        describe 'attempting to create a micropost' do
+          before { post microposts_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe 'attempting to destroy a micropost' do
+          before { delete micropost_path(FactoryGirl.create(:micropost)) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
+
     end
 
     # --- Accessing pages as a wrong user ---

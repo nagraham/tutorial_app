@@ -12,4 +12,10 @@ FactoryGirl.define do
     end
   end
 
+  # simply including a user automatically associates a micropost with the user
+  factory :micropost do
+    content 'Lorem ipsum'
+    user
+  end
+
 end
