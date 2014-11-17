@@ -75,6 +75,16 @@ describe 'Authentication' do
             expect(page).to have_title('Sign in')
           end
         end
+
+        describe 'visiting the following page' do
+          before { visit following_user_path(user) }
+          it { should have_title('Sign in') }
+        end
+
+        describe 'visiting the followers page' do
+          before { visit followers_user_path(user) }
+          it { should have_title('Sign in') }
+        end
       end
 
       # --- Accessing Protected Pages ---
@@ -102,6 +112,19 @@ describe 'Authentication' do
 
         describe 'attempting to destroy a micropost' do
           before { delete micropost_path(FactoryGirl.create(:micropost)) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
+
+      # --- Relationships Controller ---
+      describe 'in the Relationships controller' do
+        describe 'attempting the create action' do
+          before { post relationships_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe 'attempting the delete action' do
+          before { delete relationship_path(1) }
           specify { expect(response).to redirect_to(signin_path) }
         end
       end
